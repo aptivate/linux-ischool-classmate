@@ -64,7 +64,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 1, "INTEL", "BEARG31A", 0x06040000)
         W510,   1
     }
 
-    OperationRegion (PRT0, SystemIO, 0x80, 0x05)
+    OperationRegion (PRT0, SystemIO, 0x80, 0x08)
     Field (PRT0, DWordAcc, Lock, Preserve)
     {
         P80H,   32, 
@@ -1066,7 +1066,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 1, "INTEL", "BEARG31A", 0x06040000)
                     0x00000000,         // Range Minimum
                     0x00000000,         // Range Maximum
                     0x00000000,         // Translation Offset
-                    0x00000000,         // Length
+                    0x00000001,         // Length
                     0x00,, _Y00, AddressRangeMemory, TypeStatic)
                 DWordIO (ResourceProducer, MinFixed, MaxFixed, PosDecode, EntireRange,
                     0x00000000,         // Granularity
@@ -1080,14 +1080,14 @@ DefinitionBlock ("DSDT.aml", "DSDT", 1, "INTEL", "BEARG31A", 0x06040000)
                     0x00000000,         // Range Minimum
                     0x00000000,         // Range Maximum
                     0x00000000,         // Translation Offset
-                    0x00000000,         // Length
+                    0x00000001,         // Length
                     0x00,, , AddressRangeMemory, TypeStatic)
                 DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
                     0x00000000,         // Granularity
                     0xFED40000,         // Range Minimum
                     0xFED44FFF,         // Range Maximum
                     0x00000000,         // Translation Offset
-                    0x00000000,         // Length
+                    0x00005000,         // Length
                     ,, _Y0E, AddressRangeMemory, TypeStatic)
             })
             Method (_CRS, 0, Serialized)
@@ -2760,6 +2760,12 @@ DefinitionBlock ("DSDT.aml", "DSDT", 1, "INTEL", "BEARG31A", 0x06040000)
                     Method (_Q13, 0, NotSerialized)
                     {
                         Store (0x13, P80H)
+                        Return (0xFF)
+
+                        // Don't want to ever enable this feature,
+                        // as it generates an interrupt storm.
+                                                
+                        /*
                         If (LEqual (LSEN, 0x01))
                         {
                             If (LEqual (\CLST, 0x00))
@@ -2768,6 +2774,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 1, "INTEL", "BEARG31A", 0x06040000)
                                 Store (0x01, \_SB.PCI0.LPC0.EC0.LSST)
                             }
                         }
+                        */
                     }
 
                     Method (_Q15, 0, NotSerialized)
@@ -2927,6 +2934,17 @@ DefinitionBlock ("DSDT.aml", "DSDT", 1, "INTEL", "BEARG31A", 0x06040000)
 
                     Method (_Q2A, 0, NotSerialized)
                     {
+                        // If the timer event is called, because
+                        // the auto backlight feature is enabled from
+                        // before we disabled it, disable it now to
+                        // stop the interrupt storm.
+                        
+                        Store (0x00, \CLST)
+                        Store (0x00, \_SB.PCI0.LPC0.EC0.LSST)
+                        
+                        Return (0xFF)
+                        
+                        /*                    
                         If (LEqual (LSEN, 0x01))
                         {
                             If (LEqual (\CLST, 0x01))
@@ -2961,6 +2979,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 1, "INTEL", "BEARG31A", 0x06040000)
                                 }
                             }
                         }
+                        */
                     }
 
                     Method (LANC, 1, NotSerialized)
@@ -4086,13 +4105,13 @@ DefinitionBlock ("DSDT.aml", "DSDT", 1, "INTEL", "BEARG31A", 0x06040000)
             Device (IDE1)
             {
                 Name (_ADR, 0x001F0002)
-                OperationRegion (IDEP, PCI_Config, 0x10, 0x02)
+                OperationRegion (IDEP, PCI_Config, 0x10, 0x04)
                 Field (IDEP, DWordAcc, NoLock, Preserve)
                 {
                     PCMD,   16
                 }
 
-                OperationRegion (IDES, PCI_Config, 0x18, 0x02)
+                OperationRegion (IDES, PCI_Config, 0x18, 0x04)
                 Field (IDES, DWordAcc, NoLock, Preserve)
                 {
                     SCMD,   16
@@ -4124,7 +4143,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 1, "INTEL", "BEARG31A", 0x06040000)
                     ICR5,   4
                 }
 
-                OperationRegion (IDE1, PCI_Config, 0x90, 0x03)
+                OperationRegion (IDE1, PCI_Config, 0x90, 0x04)
                 Field (IDE1, DWordAcc, NoLock, Preserve)
                 {
                     MAP,    8, 
