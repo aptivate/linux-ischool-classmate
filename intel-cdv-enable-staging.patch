@@ -1,0 +1,9 @@
+--- drivers/staging/Kconfig.orig	2012-10-22 15:14:28.425112320 +0100
++++ drivers/staging/Kconfig	2012-10-22 15:14:41.053289430 +0100
+@@ -132,4 +132,6 @@
+ 
+ source "drivers/staging/media/Kconfig"
+ 
++source "drivers/staging/cdv/Kconfig"
++
+ endif # STAGING
