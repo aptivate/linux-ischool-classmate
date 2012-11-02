@@ -1,0 +1,11 @@
+Source: r8192ce
+Section: utils
+Priority: optional
+Maintainer: tista <hyro5239@i-ml.com>
+Build-Depends: cdbs, debhelper (>= 7), dkms, linux-headers-generic [i386 amd64], libtool
+Standards-Version: 3.8.1
+
+Package: r8192ce
+Architecture: all
+Depends: dkms (>= 1.95), make, ${misc:Depends}
+Description: RealTek rtl8192ce wireless driver in DKMS format.
