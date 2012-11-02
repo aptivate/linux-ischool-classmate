@@ -1,0 +1,19 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+DEB_NAME=r8192ce
+NAME=r8192ce
+VERSION=0007.0809.2012~classmate-precise-121102-1cw
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/simple-patchsys.mk
+
+DEB_DH_INSTALL_ARGS=--exclude=debian/
+
+SRC_VERSION := $(shell dpkg-parsechangelog | grep '^Version:' | cut -d' ' -f2 | cut -d- -f1 | cut -d\: -f2)
+binary-install/r8192ce::
+	cat debian/dkms.conf.in | sed -e "s/#VERSION#/$(VERSION)/" > \
+		$(CURDIR)/debian/$(cdbs_curpkg)/usr/src/$(NAME)-$(VERSION)/dkms.conf

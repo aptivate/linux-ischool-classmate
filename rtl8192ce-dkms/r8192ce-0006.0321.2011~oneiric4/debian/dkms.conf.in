@@ -1,8 +1,0 @@
-PACKAGE_NAME="r8192ce"
-PACKAGE_VERSION="0006.0321.2011~oneiric4"
-CLEAN="make clean"
-BUILT_MODULE_NAME[0]="r8192ce_pci"
-BUILT_MODULE_LOCATION[0]="HAL/rtl8192"
-DEST_MODULE_LOCATION[0]="/kernel/drivers/net/wireless/"
-AUTOINSTALL="yes"
-MAKE[0]="make"
