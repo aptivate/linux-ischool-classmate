@@ -15,5 +15,7 @@ DEB_DH_INSTALL_ARGS=--exclude=debian/
 
 SRC_VERSION := $(shell dpkg-parsechangelog | grep '^Version:' | cut -d' ' -f2 | cut -d- -f1 | cut -d\: -f2)
 binary-install/r8192ce::
+	dh_install $(DEB_DH_INSTALL_ARGS) '*' /usr/src/r8192ce-$(VERSION)
 	cat debian/dkms.conf.in | sed -e "s/#VERSION#/$(VERSION)/" > \
 		$(CURDIR)/debian/$(cdbs_curpkg)/usr/src/$(NAME)-$(VERSION)/dkms.conf
+
