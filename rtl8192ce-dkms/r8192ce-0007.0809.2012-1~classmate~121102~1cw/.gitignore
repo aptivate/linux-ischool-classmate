@@ -3,3 +3,4 @@ debian/r8192ce.debhelper.log
 debian/r8192ce.substvars
 debian/r8192ce/
 debian/stamp-patched
+*.cdbs-config_list
