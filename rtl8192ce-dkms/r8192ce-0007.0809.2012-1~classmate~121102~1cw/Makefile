@@ -1,6 +1,12 @@
 
 CC = gcc
-KVER  := $(shell uname -r)
+
+ifdef KERNELRELEASE
+KVER := $(KERNELRELEASE)
+else
+KVER := $(shell uname -r)
+endif
+
 KSRC := /lib/modules/$(KVER)/build
 MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/net/wireless/rtlwifi
 FIRMWAREDIR := /lib/firmware/
@@ -26,13 +32,13 @@ rtlwifi-objs += $(PCI_MAIN_OBJS)
 all: 
 	$(MAKE) -C $(KSRC) M=$(PWD) modules
 	@cp $(SYMBOL_FILE) rtl8192ce/
-	@make -C rtl8192ce/
+	@make -C rtl8192ce/ KSRC=$(KSRC)
 	@cp $(SYMBOL_FILE) rtl8192se/
-	@make -C rtl8192se/
+	@make -C rtl8192se/ KSRC=$(KSRC)
 	@cp $(SYMBOL_FILE) rtl8192de/
-	@make -C rtl8192de/
+	@make -C rtl8192de/ KSRC=$(KSRC)
 	@cp $(SYMBOL_FILE) rtl8723e/
-	@make -C rtl8723e/
+	@make -C rtl8723e/ KSRC=$(KSRC)
 install: all
 	find /lib/modules/$(shell uname -r) -name "r8192se_*.ko" -exec rm {} \;
 	find /lib/modules/$(shell uname -r) -name "r8192ce_*.ko" -exec rm {} \;
