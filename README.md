@@ -162,3 +162,19 @@ is fixed.
 * `kernel.config-2.6.32-36-generic` is the original kernel configuration
   on which the replacement is based.
 
+## Realtek RTL8192 driver DKMS package
+
+Based on [r8169 by Tista](https://launchpad.net/~tista/+archive/x120e/+sourcepub/1806468/+listing-archive-extra),
+updated to the latest 0007.0809.2012 driver release from Realtek.
+
+See [this thread](https://bugs.launchpad.net/ubuntu/+source/linux/+bug/902557)
+for details of the problems with this card. Precise drivers don't work
+reliably.
+
+To build the DKMS package:
+
+	git clone git://github.com/aptivate/linux-ischool-classmate.git
+	cd linux-ischool-classmate/rtl8192ce-dkms/r8192ce-0007.0809.2012-1~classmate~121102~1cw
+	debuild -i -us -uc -b
+	dpkg -i ../r8192ce_0007.0809.2012-1~classmate~121102~1cw_all.deb
+
