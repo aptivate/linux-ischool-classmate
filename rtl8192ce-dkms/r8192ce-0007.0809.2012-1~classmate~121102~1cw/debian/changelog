@@ -1,3 +1,9 @@
+r8192ce (0007.0809.2012-1~classmate~121102~1cw) precise; urgency=low
+
+  * Update to latest drivers released by Realtek: 0007.0809.2012
+
+ -- Chris Wilson <chris+ischooldebs@aptivate.org>  Fri, 02 Nov 2012 15:54:31 +0000
+
 r8192ce (0006.0321.2011~oneiric4) oneiric; urgency=high
 
   * fixed dkms build error.

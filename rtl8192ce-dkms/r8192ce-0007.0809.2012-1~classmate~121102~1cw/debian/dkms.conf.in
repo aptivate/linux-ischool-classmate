@@ -1,8 +1,30 @@
 PACKAGE_NAME="r8192ce"
-PACKAGE_VERSION="0006.0321.2011~oneiric4"
+PACKAGE_VERSION="#VERSION#"
 CLEAN="make clean"
-BUILT_MODULE_NAME[0]="r8192ce_pci"
-BUILT_MODULE_LOCATION[0]="HAL/rtl8192"
-DEST_MODULE_LOCATION[0]="/kernel/drivers/net/wireless/"
 AUTOINSTALL="yes"
 MAKE[0]="make"
+
+# need to install firmware as well:
+# http://blog.acelan.idv.tw/2010/09/how-to-build-a-dkms-package/
+# POST_INSTALL="install.sh $dkms_tree/$PACKAGE_NAME/$PACKAGE_VERSION/firmware"
+# POST_REMOVE="remove.sh"
+
+BUILT_MODULE_NAME[0]="rtlwifi"
+BUILT_MODULE_LOCATION[0]=""
+DEST_MODULE_LOCATION[0]="/kernel/updates/"
+
+BUILT_MODULE_NAME[1]="rtl8192ce"
+BUILT_MODULE_LOCATION[1]="rtl8192ce"
+DEST_MODULE_LOCATION[1]="/kernel/updates/"
+
+BUILT_MODULE_NAME[2]="rtl8192de"
+BUILT_MODULE_LOCATION[2]="rtl8192de"
+DEST_MODULE_LOCATION[2]="/kernel/updates/"
+
+BUILT_MODULE_NAME[3]="rtl8192se"
+BUILT_MODULE_LOCATION[3]="rtl8192se"
+DEST_MODULE_LOCATION[3]="/kernel/updates/"
+
+BUILT_MODULE_NAME[4]="rtl8723e"
+BUILT_MODULE_LOCATION[4]="rtl8723e"
+DEST_MODULE_LOCATION[4]="/kernel/updates/"

@@ -6,7 +6,7 @@
 
 DEB_NAME=r8192ce
 NAME=r8192ce
-VERSION=0006.0321.2011~oneiric4
+VERSION=0007.0809.2012-1~classmate~121102~1cw
 
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/rules/simple-patchsys.mk
@@ -15,5 +15,18 @@ DEB_DH_INSTALL_ARGS=--exclude=debian/
 
 SRC_VERSION := $(shell dpkg-parsechangelog | grep '^Version:' | cut -d' ' -f2 | cut -d- -f1 | cut -d\: -f2)
 binary-install/r8192ce::
-	cat debian/dkms.conf.in | sed -e "s/#VERSION#/$(VERSION)/" > \
-		$(CURDIR)/debian/$(cdbs_curpkg)/usr/src/$(NAME)-$(VERSION)/dkms.conf
+	dh_install $(DEB_DH_INSTALL_ARGS) '*' /usr/src/r8192ce-$(SRC_VERSION)
+
+	# Firmwares not in linux-firmware yet can be added to the system here.
+	# Maybe better to upgrade/patch linux-firmware instead? Not easy!
+	dh_install $(DEB_DH_INSTALL_ARGS) firmware/rtlwifi/rtl8192cfwU_B.bin   /lib/firmware/rtlwifi
+	dh_install $(DEB_DH_INSTALL_ARGS) firmware/rtlwifi/rtl8192cfwU.bin     /lib/firmware/rtlwifi
+	dh_install $(DEB_DH_INSTALL_ARGS) firmware/rtlwifi/rtl8192defw_12.bin  /lib/firmware/rtlwifi
+	dh_install $(DEB_DH_INSTALL_ARGS) firmware/rtlwifi/rtl8192sefw.old.bin /lib/firmware/rtlwifi
+	dh_install $(DEB_DH_INSTALL_ARGS) firmware/rtlwifi/rtl8723fw.bin       /lib/firmware/rtlwifi
+
+	# dh_install debian/install.sh /usr/src/r8192ce-$(SRC_VERSION)
+	# dh_install debian/remove.sh  /usr/src/r8192ce-$(SRC_VERSION)
+	cat debian/dkms.conf.in | sed -e "s/#VERSION#/$(SRC_VERSION)/" > \
+		$(CURDIR)/debian/$(cdbs_curpkg)/usr/src/$(NAME)-$(SRC_VERSION)/dkms.conf
+
