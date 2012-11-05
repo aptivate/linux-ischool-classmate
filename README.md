@@ -174,7 +174,7 @@ reliably.
 To build the DKMS package:
 
 	git clone git://github.com/aptivate/linux-ischool-classmate.git
-	cd rtl8192ce-dkms/r8192ce-0007.0809.2012-1~classmate~121102~1cw
+	cd linux-ischool-classmate/rtl8192ce-dkms/r8192ce-0007.0809.2012-1~classmate~121102~1cw
 	debuild -i -us -uc -b
 	dpkg -i ../r8192ce_0007.0809.2012-1~classmate~121102~1cw_all.deb
 
