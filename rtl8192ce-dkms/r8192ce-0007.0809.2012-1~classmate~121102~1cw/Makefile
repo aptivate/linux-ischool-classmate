@@ -1,54 +1,84 @@
-NIC_SELECT = RTL8192CE
-LINUX_KSRC_MODULE = /lib/modules/$(shell uname -r)/kernel/drivers/net/wireless/
-RTL819x_DIR = $(shell pwd)
-KVER  = $(shell uname -r)
-KSRC = /lib/modules/$(KVER)/build
-RTL819x_FIRM_DIR = $(RTL819x_DIR)/firmware
-HAL_SUB_DIR = rtl8192
-MODULE_FILE = $(RTL819x_DIR)/rtllib/Module.symvers
-SCRIPT_FOLDER = /etc/realtek
 
-export LINUX_KSRC_MODULE_DIR RTL819x_FIRM_DIR
+CC = gcc
+KVER  := $(shell uname -r)
+KSRC := /lib/modules/$(KVER)/build
+MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/net/wireless/rtlwifi
+FIRMWAREDIR := /lib/firmware/
+PWD := $(shell pwd)
+CLR_MODULE_FILES := *.mod.c *.mod *.o .*.cmd *.ko *~ .tmp_versions* modules.order Module.symvers
+SYMBOL_FILE := Module.symvers
+
+EXTRA_CFLAGS += -O2
+obj-m := rtlwifi.o
+PCI_MAIN_OBJS	:= base.o	\
+		rc.o	\
+		debug.o	\
+		regd.o	\
+		efuse.o	\
+		cam.o	\
+		ps.o	\
+		core.o	\
+		stats.o	\
+		pci.o	\
+
+rtlwifi-objs += $(PCI_MAIN_OBJS)
 
 all: 
-ifeq ($(shell uname -r|cut -d. -f1,2), 2.4)
-#	@make -C $(RTL819x_DIR)/rtllib
-	@make -C $(RTL819x_DIR)/HAL/$(HAL_SUB_DIR) 
-	@make -C $(RTL819x_DIR)/wapi_supplicant
-else	
-#	@make -C $(KSRC) SUBDIRS=$(RTL819x_DIR)/rtllib modules 
-#	@test -f $(MODULE_FILE) && cp $(MODULE_FILE) $(RTL819x_DIR)/HAL/$(HAL_SUB_DIR) || echo > /dev/null 
-ifeq ($(NIC_SELECT), RTL8192SE_SA)
-	@make -C $(RTL819x_DIR)/hostapd-0.6.10/hostapd
-endif
-	@make -C $(KSRC) SUBDIRS=$(RTL819x_DIR)/HAL/$(HAL_SUB_DIR) modules 
-#	@make -C $(RTL819x_DIR)/wapi_supplicant
-endif
+	$(MAKE) -C $(KSRC) M=$(PWD) modules
+	@cp $(SYMBOL_FILE) rtl8192ce/
+	@make -C rtl8192ce/
+	@cp $(SYMBOL_FILE) rtl8192se/
+	@make -C rtl8192se/
+	@cp $(SYMBOL_FILE) rtl8192de/
+	@make -C rtl8192de/
+	@cp $(SYMBOL_FILE) rtl8723e/
+	@make -C rtl8723e/
 install: all
-	@rm -f /etc/acpi/wireless-rtl-ac-dc-power.sh
-	@rm -f /etc/acpi/events/RadioPower.sh
-	@cp -fr realtek/ /etc
-	@make -C HAL/$(HAL_SUB_DIR)/ install
-#	@cp $(RTL819x_DIR)/wapi_supplicant/wapi_supplicant /usr/bin/
+	find /lib/modules/$(shell uname -r) -name "r8192se_*.ko" -exec rm {} \;
+	find /lib/modules/$(shell uname -r) -name "r8192ce_*.ko" -exec rm {} \;
+	find /lib/modules/$(shell uname -r) -name "r8723e_*.ko" -exec rm {} \;
+	@rm -fr $(FIRMWAREDIR)/`uname -r`/rtlwifi
+
+	$(shell rm -fr $(MODDESTDIR))
+	$(shell mkdir $(MODDESTDIR))
+	$(shell mkdir $(MODDESTDIR)/rtl8192se)
+	$(shell mkdir $(MODDESTDIR)/rtl8192ce)
+	$(shell mkdir $(MODDESTDIR)/rtl8192de)
+	$(shell mkdir $(MODDESTDIR)/rtl8723e)
+	@install -p -m 644 rtlwifi.ko $(MODDESTDIR)	
+	@install -p -m 644 ./rtl8192se/rtl8192se.ko $(MODDESTDIR)/rtl8192se
+	@install -p -m 644 ./rtl8192ce/rtl8192ce.ko $(MODDESTDIR)/rtl8192ce
+	@install -p -m 644 ./rtl8192de/rtl8192de.ko $(MODDESTDIR)/rtl8192de
+	@install -p -m 644 ./rtl8723e/rtl8723e.ko $(MODDESTDIR)/rtl8723e
+
+	
+	@depmod -a
+
+	@#copy firmware img to target fold
+	@#$(shell [ -d "$(FIRMWAREDIR)/`uname -r`" ] && cp -fr firmware/rtlwifi/ $(FIRMWAREDIR)/`uname -r`/.)
+	@#$(shell [ ! -d "$(FIRMWAREDIR)/`uname -r`" ] && cp -fr firmware/rtlwifi/ $(FIRMWAREDIR)/.)
+	@cp -fr firmware/rtlwifi/ $(FIRMWAREDIR)/
+
 uninstall:
-	@make -C HAL/$(HAL_SUB_DIR)/ uninstall
-	@rm -fr $(SCRIPT_FOLDER)
-	@rm -f /usr/bin/wapi_supplicant
+	$(shell [ -d "$(MODDESTDIR)" ] && rm -fr $(MODDESTDIR))
+	
+	@depmod -a
+	
+	@#delete the firmware img
+	@rm -fr /lib/firmware/rtlwifi/
+	@rm -fr /lib/firmware/`uname -r`/rtlwifi/
+
 clean:
-	@make -C HAL/$(HAL_SUB_DIR)/ clean
-	@make -C rtllib/ clean
-	@test -r mshclass/ && make -C mshclass/ clean|| echo > /dev/null 
-	@test -r wapi_supplicant/ && make -C wapi_supplicant/ clean|| echo > /dev/null 
-	@rm -fr Modules.symvers
-	@rm -fr Module.symvers
-	@rm -fr Module.markers
-	@rm -fr modules.order
-	@rm -fr .tmp_versions
-	@rm -fr *~
-	@rm -f tags
-ifeq ($(NIC_SELECT), RTL8192SE_SA)
-	@make -C $(RTL819x_DIR)/hostapd-0.6.10/hostapd clean
-endif
-ifeq ($(NIC_SELECT), RTL8192CE_BT30)
-	@make -C btlib clean
-endif
+	rm -fr *.mod.c *.mod *.o .*.cmd *.ko *~
+	rm -fr .tmp_versions
+	rm -fr Modules.symvers
+	rm -fr Module.symvers
+	rm -fr Module.markers
+	rm -fr modules.order
+	rm -fr tags
+	@find -name "tags" -exec rm {} \;
+	@rm -fr $(CLR_MODULE_FILES)
+	@make -C rtl8192ce/ clean
+	@make -C rtl8192se/ clean
+	@make -C rtl8192de/ clean
+	@make -C rtl8723e/ clean
