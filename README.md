@@ -139,8 +139,15 @@ the supplied version. You can build this kernel by following these steps:
 	    --append-to-version=-cw-custom-dsdt-120731-1 \
 	    kernel-image kernel-headers kernel-debug
 
-and then install that kernel on an Ubuntu Lucid installation on the
-Classmate and verify that the problem is fixed.
+Copy the resulting kernel package to a Classmate laptop and install it.
+Then run `update-initramfs` and `update-grub`:
+
+	sudo update-initramfs -k 2.6.32.59+drm33.24-cw-custom-dsdt-120807-1 -c
+	sudo update-grub
+
+Check that `update-grub` detects both the new kernel and its corresponding
+`initrd.img`, then reboot using the new kernel and verify that the problem
+is fixed.
 
 ## Files
 
