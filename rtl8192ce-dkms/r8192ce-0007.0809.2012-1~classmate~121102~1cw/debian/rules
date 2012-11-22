@@ -24,7 +24,7 @@ binary-install/r8192ce::
 	dh_install $(DEB_DH_INSTALL_ARGS) firmware/rtlwifi/rtl8192defw_12.bin  /lib/firmware/rtlwifi
 	dh_install $(DEB_DH_INSTALL_ARGS) firmware/rtlwifi/rtl8192sefw.old.bin /lib/firmware/rtlwifi
 	dh_install $(DEB_DH_INSTALL_ARGS) firmware/rtlwifi/rtl8723fw.bin       /lib/firmware/rtlwifi
-
+	dh_install $(DEB_DH_INSTALL_ARGS) firmware/rtlwifi/rtl8723fw_B.bin       /lib/firmware/rtlwifi
 	# dh_install debian/install.sh /usr/src/r8192ce-$(SRC_VERSION)
 	# dh_install debian/remove.sh  /usr/src/r8192ce-$(SRC_VERSION)
 	cat debian/dkms.conf.in | sed -e "s/#VERSION#/$(SRC_VERSION)/" > \
